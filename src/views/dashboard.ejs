@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+</head>
+<body>
+  <h1>Dashboard</h1>
+  <p>Welcome, <strong><%= user.name %></strong> (<%= user.email %>)</p>
+
+  <% if (error) { %>
+    <p style="color:red;"><%= error %></p>
+  <% } %>
+
+  <h2>Create Category</h2>
+  <form method="POST" action="/categories">
+    <input name="name" type="text" placeholder="Category name" required />
+    <button type="submit">Add Category</button>
+  </form>
+
+  <h2>Filter Tasks</h2>
+  <form method="GET" action="/dashboard">
+    <select name="category">
+      <option value="all" <%= selectedCategory === "all" ? "selected" : "" %>>All</option>
+      <% categories.forEach(c => { %>
+        <option value="<%= c.id %>" <%= String(selectedCategory) === String(c.id) ? "selected" : "" %>>
+          <%= c.name %>
+        </option>
+      <% }) %>
+    </select>
+    <button type="submit">Apply</button>
+  </form>
+
+  <h2>Create Task</h2>
+  <form method="POST" action="/tasks">
+    <input name="title" type="text" placeholder="Task title" required />
+    <br />
+    <textarea name="description" placeholder="Task description (optional)"></textarea>
+    <br />
+    <select name="category_id">
+      <option value="">No category</option>
+      <% categories.forEach(c => { %>
+        <option value="<%= c.id %>"><%= c.name %></option>
+      <% }) %>
+    </select>
+    <button type="submit">Create</button>
+  </form>
+
+  <h2>Your Tasks</h2>
+  <% if (!tasks || !tasks.length) { %>
+    <p>No tasks found.</p>
+  <% } %>
+
+  <ul>
+    <% (tasks || []).forEach(task => { %>
+      <li>
+        <strong><%= task.title %></strong>
+        - <em><%= task.status %></em>
+        - Category: <%= task.category_name || "Uncategorized" %>
+
+        <% if (task.description) { %>
+          <div><%= task.description %></div>
+        <% } %>
+
+        <form method="POST" action="/tasks/<%= task.id %>/category" style="display:inline;">
+          <select name="category_id">
+            <option value="">No category</option>
+            <% categories.forEach(c => { %>
+              <option value="<%= c.id %>" <%= task.category_id === c.id ? "selected" : "" %>><%= c.name %></option>
+            <% }) %>
+          </select>
+          <button type="submit">Assign</button>
+        </form>
+
+        <% if (task.status !== "completed") { %>
+          <form method="POST" action="/tasks/<%= task.id %>/complete" style="display:inline;">
+            <button type="submit">Mark Completed</button>
+          </form>
+        <% } %>
+
+        <form method="POST" action="/tasks/<%= task.id %>/delete" style="display:inline;">
+          <button type="submit">Delete</button>
+        </form>
+      </li>
+    <% }) %>
+  </ul>
+
+  <form method="POST" action="/logout">
+    <button type="submit">Logout</button>
+  </form>
+</body>
+</html>

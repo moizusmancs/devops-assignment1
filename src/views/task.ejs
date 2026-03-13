@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tasks</title>
+</head>
+<body>
+  <h1>Task Management</h1>
+  <p>Welcome, <strong><%= user.name %></strong> | <a href="/dashboard">Dashboard</a></p>
+
+  <% if (error) { %>
+    <p style="color:red;"><%= error %></p>
+  <% } %>
+
+  <h2>Create Task</h2>
+  <form method="POST" action="/tasks">
+    <input name="title" type="text" placeholder="Task title" required />
+    <br />
+    <textarea name="description" placeholder="Task description (optional)"></textarea>
+    <br />
+    <button type="submit">Create</button>
+  </form>
+
+  <h2>Your Tasks</h2>
+  <% if (!tasks.length) { %>
+    <p>No tasks yet.</p>
+  <% } %>
+
+  <ul>
+    <% tasks.forEach(task => { %>
+      <li>
+        <strong><%= task.title %></strong>
+        - <em><%= task.status %></em>
+        <% if (task.description) { %>
+          <div><%= task.description %></div>
+        <% } %>
+
+        <% if (task.status !== "completed") { %>
+          <form method="POST" action="/tasks/<%= task.id %>/complete" style="display:inline;">
+            <button type="submit">Mark Completed</button>
+          </form>
+        <% } %>
+
+        <form method="POST" action="/tasks/<%= task.id %>/delete" style="display:inline;">
+          <button type="submit">Delete</button>
+        </form>
+      </li>
+    <% }) %>
+  </ul>
+
+  <form method="POST" action="/logout">
+    <button type="submit">Logout</button>
+  </form>
+</body>
+</html>
