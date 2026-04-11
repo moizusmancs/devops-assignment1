@@ -6,6 +6,12 @@ pipeline {
     }
 
     stages {
+        stage('Cleanup') {
+            steps {
+                sh 'docker compose -f ${COMPOSE_FILE} down --remove-orphans || true'
+            }
+        }
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -14,6 +20,7 @@ pipeline {
 
         stage('Prepare Env') {
             steps {
+                sh 'rm -f .env'
                 withCredentials([file(credentialsId: 'taskflow-env', variable: 'ENV_FILE')]) {
                     sh 'cp $ENV_FILE .env'
                 }
