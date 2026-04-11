@@ -1,6 +1,6 @@
 services:
   app:
-    image: your-dockerhub-username/taskflow:latest   # replace with your Docker Hub image
+    image: moizusmancs/taskflow:latest   # replace with your Docker Hub image
     ports:
       - "3000:3000"
     env_file: .env
