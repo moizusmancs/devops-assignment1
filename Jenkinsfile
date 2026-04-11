@@ -12,6 +12,14 @@ pipeline {
             }
         }
 
+        stage('Prepare Env') {
+            steps {
+                withCredentials([file(credentialsId: 'taskflow-env', variable: 'ENV_FILE')]) {
+                    sh 'cp $ENV_FILE .env'
+                }
+            }
+        }
+
         stage('Build') {
             steps {
                 sh 'docker compose -f ${COMPOSE_FILE} build'
